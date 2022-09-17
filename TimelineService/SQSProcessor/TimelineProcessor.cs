@@ -5,7 +5,7 @@ using Amazon.SQS.Model;
 
 namespace TimelineService.SQSProcessor
 {
-    public class PostProcessor : BackgroundService
+    public class TimelineProcessor : BackgroundService
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -27,7 +27,9 @@ namespace TimelineService.SQSProcessor
                 foreach (var message in response.Messages)
                 {
                     Console.WriteLine(message.Body);
-                    if (message.Body.Contains("Exception")) continue; //send to dead letter queue
+                    if (message.Body.Contains("Exception")) continue; //send to dead letter queue if message contains exception
+                    //call createmethod and put message body inside 
+
                     await client.DeleteMessageAsync("https://sqs.eu-central-1.amazonaws.com/075206908135/PostTimelineQueue", message.ReceiptHandle);
                 }
             }
