@@ -19,12 +19,16 @@ namespace TimelineService.SQSProcessor
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-          //  var appconfig = new AppConfig();
-            //configuration.GetSection("QueueUrl").Bind(appconfig);
+            var appconfig = configuration.GetSection("AppConfig").Get<AppConfig>();
 
-            var url = configuration["AppConfig:QueueUrl"];
-            var accessKeyId = configuration["AppConfig:AccessKeyId"];
-            var secretAccessKey = configuration["AppConfig:AccessSecreyKey"];
+
+            var url = appconfig.QueueUrl;
+            var secretAccessKey = appconfig.SecretAccessKey;
+            var accessKeyId = appconfig.AccessKeyId;
+
+            //var url = configuration["AppConfig:QueueUrl"];
+           // var accessKeyId = configuration["AppConfig:AccessKeyId"];
+           // var secretAccessKey = configuration["AppConfig:AccessSecreyKey"];
             Console.WriteLine("Starting background processor");
             var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
             var client = new AmazonSQSClient(credentials, RegionEndpoint.EUCentral1);

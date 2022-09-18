@@ -4,6 +4,6 @@
     {
         public string QueueUrl { get; set; }
         public string AccessKeyId { get; set; }
-        public string AccessSecreyKey { get; set; }
+        public string SecretAccessKey { get; set; }
     }
 }
