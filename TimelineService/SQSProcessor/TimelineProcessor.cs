@@ -2,15 +2,31 @@
 using Amazon.SQS;
 using Amazon;
 using Amazon.SQS.Model;
+using Microsoft.Extensions.Configuration;
+using TimelineService.Model;
 
 namespace TimelineService.SQSProcessor
 {
     public class TimelineProcessor : BackgroundService
     {
+
+        private IConfiguration configuration;
+
+        public TimelineProcessor(IConfiguration _configuration)
+        {
+            configuration = _configuration;
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+          //  var appconfig = new AppConfig();
+            //configuration.GetSection("QueueUrl").Bind(appconfig);
+
+            var url = configuration["AppConfig:QueueUrl"];
+            var accessKeyId = configuration["AppConfig:AccessKeyId"];
+            var secretAccessKey = configuration["AppConfig:AccessSecreyKey"];
             Console.WriteLine("Starting background processor");
-            var credentials = new BasicAWSCredentials("", "");
+            var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
             var client = new AmazonSQSClient(credentials, RegionEndpoint.EUCentral1);
 
             while (!stoppingToken.IsCancellationRequested)
@@ -18,7 +34,7 @@ namespace TimelineService.SQSProcessor
                 Console.WriteLine($"Getting messages from the queue {DateTime.Now}");
                 var request = new ReceiveMessageRequest()
                 {
-                    QueueUrl = "https://sqs.eu-central-1.amazonaws.com/075206908135/PostTimelineQueue",
+                    QueueUrl = url,
                     WaitTimeSeconds = 15,
                     VisibilityTimeout = 20//for long polling
 

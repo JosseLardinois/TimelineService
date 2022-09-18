@@ -1,4 +1,5 @@
 using TimelineService.SQSProcessor;
+using TimelineService.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,9 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+
+
+var url = builder.Configuration["AppConfig:QueueUrl"];
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
