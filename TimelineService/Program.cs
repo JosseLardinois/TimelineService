@@ -13,9 +13,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-
-
-var url = builder.Configuration["AppConfig:QueueUrl"];
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

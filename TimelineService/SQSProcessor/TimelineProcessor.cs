@@ -20,17 +20,8 @@ namespace TimelineService.SQSProcessor
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var appconfig = configuration.GetSection("AppConfig").Get<AppConfig>();
-
-
-            var url = appconfig.QueueUrl;
-            var secretAccessKey = appconfig.SecretAccessKey;
-            var accessKeyId = appconfig.AccessKeyId;
-
-            //var url = configuration["AppConfig:QueueUrl"];
-           // var accessKeyId = configuration["AppConfig:AccessKeyId"];
-           // var secretAccessKey = configuration["AppConfig:AccessSecreyKey"];
             Console.WriteLine("Starting background processor");
-            var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
+            var credentials = new BasicAWSCredentials(appconfig.AccessKeyId, appconfig.SecretAccessKey);
             var client = new AmazonSQSClient(credentials, RegionEndpoint.EUCentral1);
 
             while (!stoppingToken.IsCancellationRequested)
@@ -38,7 +29,7 @@ namespace TimelineService.SQSProcessor
                 Console.WriteLine($"Getting messages from the queue {DateTime.Now}");
                 var request = new ReceiveMessageRequest()
                 {
-                    QueueUrl = url,
+                    QueueUrl = appconfig.QueueUrl,
                     WaitTimeSeconds = 15,
                     VisibilityTimeout = 20//for long polling
 
