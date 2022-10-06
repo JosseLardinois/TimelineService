@@ -5,14 +5,14 @@ using Amazon.SQS.Model;
 using Microsoft.Extensions.Configuration;
 using TimelineService.Model;
 
-namespace TimelineService.SQSProcessor
+namespace TimelineService.Processor
 {
-    public class TimelineProcessor : BackgroundService
+    public class TimelinePostsProcessor : BackgroundService
     {
 
         private IConfiguration configuration;
 
-        public TimelineProcessor(IConfiguration _configuration)
+        public TimelinePostsProcessor(IConfiguration _configuration)
         {
             configuration = _configuration;
         }
@@ -29,7 +29,7 @@ namespace TimelineService.SQSProcessor
                 Console.WriteLine($"Getting messages from the queue {DateTime.Now}");
                 var request = new ReceiveMessageRequest()
                 {
-                    QueueUrl = appconfig.QueueUrl,
+                    QueueUrl = appconfig.TimelinePostsQueueUrl,
                     WaitTimeSeconds = 15,
                     VisibilityTimeout = 20//for long polling
 
