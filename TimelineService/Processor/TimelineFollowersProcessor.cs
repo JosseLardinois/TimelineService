@@ -17,7 +17,7 @@ namespace TimelineService.Processor
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var sqsPostQueue = Environment.GetEnvironmentVariable("AWS_POST_SQS_QUEUE");
+            var sqsFollowerQueue = Environment.GetEnvironmentVariable("AWS_FOLLOWER_SQS_QUEUE");
             var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
             var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
             var credentials = new BasicAWSCredentials(accessKey, secretKey);
@@ -29,7 +29,7 @@ namespace TimelineService.Processor
                 Console.WriteLine($"Getting messages from the queue {DateTime.Now}");
                 var request = new ReceiveMessageRequest()
                 {
-                    QueueUrl = sqsPostQueue,
+                    QueueUrl = sqsFollowerQueue,
                     WaitTimeSeconds = 15,
                     VisibilityTimeout = 20//for long polling
 
@@ -38,12 +38,12 @@ namespace TimelineService.Processor
                 foreach (var message in response.Messages)
                 {
                     Console.WriteLine(message.Body);
-                    MessageProcessor processor = new MessageProcessor();
-                    processor.addToMessageAndDisplay(message);
+                    FollowerMessageProcessor processor = new FollowerMessageProcessor();
+                    processor.addToDatabase(message);
                     if (message.Body.Contains("Exception")) continue; //send to dead letter queue if message contains exception
                                                                       //call createmethod and put message body inside 
 
-                    // await client.DeleteMessageAsync("https://sqs.eu-central-1.amazonaws.com/075206908135/FollowerTimelineQueue", message.ReceiptHandle);
+                    await client.DeleteMessageAsync(sqsFollowerQueue, message.ReceiptHandle);
                 }
             }
         }

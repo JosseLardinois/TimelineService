@@ -19,9 +19,11 @@ namespace TimelineService.Processor
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var appconfig = configuration.GetSection("AppConfig").Get<AppConfig>();
-            Console.WriteLine("Starting background processor");
-            var credentials = new BasicAWSCredentials(appconfig.AccessKeyId, appconfig.SecretAccessKey);
+            var sqsPostQueue = Environment.GetEnvironmentVariable("AWS_POST_SQS_QUEUE");
+            var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+            var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+            var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            Console.WriteLine("Starting background process");
             var client = new AmazonSQSClient(credentials, RegionEndpoint.EUCentral1);
 
             while (!stoppingToken.IsCancellationRequested)
@@ -29,7 +31,7 @@ namespace TimelineService.Processor
                 Console.WriteLine($"Getting messages from the queue {DateTime.Now}");
                 var request = new ReceiveMessageRequest()
                 {
-                    QueueUrl = appconfig.TimelinePostsQueueUrl,
+                    QueueUrl = sqsPostQueue,
                     WaitTimeSeconds = 15,
                     VisibilityTimeout = 20//for long polling
 
@@ -38,10 +40,12 @@ namespace TimelineService.Processor
                 foreach (var message in response.Messages)
                 {
                     Console.WriteLine(message.Body);
+                    PostMessageProcessor processor = new PostMessageProcessor();
+                    processor.addToDatabase(message);
                     if (message.Body.Contains("Exception")) continue; //send to dead letter queue if message contains exception
                     //call createmethod and put message body inside 
 
-                    await client.DeleteMessageAsync("https://sqs.eu-central-1.amazonaws.com/075206908135/PostTimelineQueue", message.ReceiptHandle);
+                   // await client.DeleteMessageAsync(sqsPostQueue, message.ReceiptHandle);
                 }
             }
         }

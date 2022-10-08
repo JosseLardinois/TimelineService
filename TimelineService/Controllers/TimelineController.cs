@@ -1,27 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
 using Amazon.DynamoDBv2.DataModel;
 using TimelineService.Model;
+using TimelineService.Interfaces;
 
-namespace TimelineService.Controller
+namespace TimelineService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TimelineController : ControllerBase
+    public class TimelineController : Controller
     {
-        private readonly IDynamoDBContext _context;
+        private IFollowersRepository _repository;
+        private IConfiguration _configuration;
 
-        public TimelineController(IDynamoDBContext context)
+        public TimelineController(IConfiguration configuration, IFollowersRepository repository)
         {
-            _context = context;
+            _configuration = configuration;
+            _repository = repository;
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> CreatePost(Post postRequest)
+        public async Task<ActionResult> Create(FollowerInputModel model)
         {
-            var post = await _context.LoadAsync<Post>(postRequest.Id);
-            if (post != null) return BadRequest($"Post with Id {postRequest.Id} Already Exists");
-            await _context.SaveAsync(postRequest);
-            return Ok(postRequest);
+            await _repository.Add(model);
+            return Ok(model);
         }
 
     }

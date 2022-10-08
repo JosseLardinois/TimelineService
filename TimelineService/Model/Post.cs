@@ -1,12 +1,13 @@
-﻿namespace TimelineService.Model
-{
+﻿using Amazon.DynamoDBv2.DataModel;
 
-    public class Post
+namespace TimelineService.Model
+{
+    public class UserPosts
     {
-        // ? is used to allow a value type to set to null
-        public int? Id { get; set; }
-        public string? Text { get; set; }
-        public string? UserId { get; set; }
-        public string? Likes { get; set; }
+        public string? text { get; set; }
+        public Guid userId { get; set; }
+        public DateTime creationTime { get; set; }
+
+
     }
 }
