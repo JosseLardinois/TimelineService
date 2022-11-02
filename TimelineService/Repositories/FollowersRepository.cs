@@ -14,8 +14,6 @@ namespace TimelineService.Repositories
 
         public FollowersRepository()
         {
-
-
             _client = new AmazonDynamoDBClient(RegionEndpoint.EUWest1);
             _context = new DynamoDBContext(_client);
         }

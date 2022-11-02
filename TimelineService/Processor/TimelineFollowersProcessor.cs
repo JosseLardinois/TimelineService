@@ -39,7 +39,7 @@ namespace TimelineService.Processor
                 {
                     Console.WriteLine(message.Body);
                     FollowerMessageProcessor processor = new FollowerMessageProcessor();
-                    processor.addToDatabase(message);
+                    processor.ProcessMessage(message);
                     if (message.Body.Contains("Exception")) continue; //send to dead letter queue if message contains exception
                                                                       //call createmethod and put message body inside 
 

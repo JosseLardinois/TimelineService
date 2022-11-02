@@ -12,7 +12,7 @@ awsOptions.Credentials = new EnvironmentVariablesAWSCredentials();
 builder.Services.AddDefaultAWSOptions(awsOptions);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();     
-//builder.Services.AddHostedService<TimelineFollowersProcessor>();//background process
+builder.Services.AddHostedService<TimelineFollowersProcessor>();//background process
 builder.Services.AddHostedService<TimelinePostsProcessor>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IFollowersRepository, FollowersRepository>();

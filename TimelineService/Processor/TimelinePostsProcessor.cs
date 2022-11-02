@@ -41,11 +41,10 @@ namespace TimelineService.Processor
                 {
                     Console.WriteLine(message.Body);
                     PostMessageProcessor processor = new PostMessageProcessor();
-                    processor.addToDatabase(message);
+                    processor.ProcessMessage(message);
                     if (message.Body.Contains("Exception")) continue; //send to dead letter queue if message contains exception
                     //call createmethod and put message body inside 
-
-                   // await client.DeleteMessageAsync(sqsPostQueue, message.ReceiptHandle);
+                    await client.DeleteMessageAsync(sqsPostQueue, message.ReceiptHandle);
                 }
             }
         }

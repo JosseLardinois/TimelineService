@@ -6,7 +6,7 @@ namespace TimelineService.Model
     {
         public string? text { get; set; }
         public Guid userId { get; set; }
-        public DateTime creationTime { get; set; }
+        public string? creationTime { get; set; }
 
 
     }

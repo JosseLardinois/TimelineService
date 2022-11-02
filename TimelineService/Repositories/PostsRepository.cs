@@ -18,13 +18,13 @@ namespace PostService.Repositories
             _client = new AmazonDynamoDBClient(RegionEndpoint.EUWest1);
             _context = new DynamoDBContext(_client);
         }
-        public async Task Add(PostInputModel entity)
+        public async Task Add(PostInputModel entity)//sets miliseconds to zero
         {
             var post = new UserPosts
             {
                 userId = entity.UserId,
                 text = entity.Text,
-                creationTime = DateTime.Now,
+                creationTime = entity.CreationTime,
 
             };
 
@@ -33,7 +33,8 @@ namespace PostService.Repositories
 
         public async Task<IEnumerable<UserPosts>> All(Guid postId)
         {
-            return await _context.QueryAsync<UserPosts>(postId).GetRemainingAsync();
+            var i = await _context.QueryAsync<UserPosts>(postId).GetRemainingAsync();
+            return i;
         }
 
         public async Task Remove(PostInputModel entity)
